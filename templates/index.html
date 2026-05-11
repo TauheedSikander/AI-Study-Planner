@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Study Planner</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f0f4ff 0%, #e0e7ff 100%);
+      height: 100vh;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 280px;
+      background: white;
+      border-right: 1px solid #e2e8f0;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+    }
+
+    .logo {
+      padding: 25px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .logo h1 {
+      font-size: 28px;
+      font-weight: 700;
+      color: #4f46e5;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav {
+      flex: 1;
+      padding: 20px;
+    }
+
+    .nav a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      color: #64748b;
+      text-decoration: none;
+      border-radius: 12px;
+      margin-bottom: 6px;
+      font-weight: 500;
+      transition: all 0.3s;
+    }
+
+    .nav a:hover, .nav a.active {
+      background: #f0f0ff;
+      color: #4f46e5;
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 30px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .header h2 {
+      font-size: 28px;
+      color: #1e2937;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .user-avatar {
+      width: 45px;
+      height: 45px;
+      background: #4f46e5;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+
+    /* Card */
+    .card {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+      padding: 30px;
+      margin-bottom: 30px;
+    }
+
+    /* Form */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 14px 18px;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      font-size: 16px;
+      transition: all 0.3s;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #6366f1;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+    }
+
+    .generate-btn {
+      width: 100%;
+      padding: 18px;
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 25px;
+      transition: all 0.3s;
+    }
+
+    .generate-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 25px rgba(79, 70, 229, 0.3);
+    }
+
+    /* Results */
+    #results {
+      display: none;
+    }
+
+    .schedule-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    .schedule-table th,
+    .schedule-table td {
+      padding: 14px 16px;
+      text-align: left;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .schedule-table th {
+      background: #f8fafc;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .schedule-table tr:hover {
+      background: #f8fafc;
+    }
+
+    /* Timer */
+    #timer {
+      font-size: 72px;
+      font-weight: 700;
+      font-family: monospace;
+      color: #1e2937;
+      margin: 20px 0;
+    }
+
+    .timer-btn {
+      padding: 12px 32px;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .start-btn {
+      background: #10b981;
+      color: white;
+      border: none;
+    }
+
+    .reset-btn {
+      background: #e2e8f0;
+      color: #334155;
+      border: none;
+    }
+
+    /* Progress */
+    .progress-circle {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: conic-gradient(#6366f1 0% 0%, #e2e8f0 0% 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 15px auto;
+    }
+
+    .progress-inner {
+      width: 90px;
+      height: 90px;
+      background: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: bold;
+      color: #4f46e5;
+    }
+
+    .ai-suggestions {
+      line-height: 1.7;
+      color: #374151;
+      max-height: 320px;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="sidebar">
+    <div class="logo">
+      <h1><i class="fa-solid fa-graduation-cap"></i> StudyFlow</h1>
+      <p style="color: #64748b; font-size: 14px; margin-top: 5px;">AI Study Planner</p>
+    </div>
+    
+    <div class="nav">
+      <a href="#" class="active"><i class="fa-solid fa-house"></i> Dashboard</a>
+      <a href="#"><i class="fa-solid fa-calendar-days"></i> Schedule</a>
+      <a href="#" onclick="startTimer()"><i class="fa-solid fa-clock"></i> Focus Timer</a>
+      <a href="#"><i class="fa-solid fa-chart-line"></i> Progress</a>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="header">
+      <h2>AI Study Planner</h2>
+      <div class="user-info">
+        <div>
+          <strong>Alex Chen</strong><br>
+          <small style="color: #64748b;">Keep pushing forward!</small>
+        </div>
+        <div class="user-avatar">AC</div>
+      </div>
+    </div>
+
+    <!-- Input Form -->
+    <div class="card">
+      <h3 style="margin-bottom: 20px; font-size: 22px; color: #1e2937;">
+        <i class="fa-solid fa-wand-magic-sparkles" style="color: #6366f1;"></i> Create Study Schedule
+      </h3>
+      
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Exam Date</label>
+          <input type="date" id="exam_date" required>
+        </div>
+        <div class="form-group">
+          <label>Subjects (comma separated)</label>
+          <input type="text" id="subjects" placeholder="Math, Physics, Biology" required>
+        </div>
+        <div class="form-group">
+          <label>Hours per Day</label>
+          <input type="number" id="hours_per_day" value="6" min="1" max="12" required>
+        </div>
+      </div>
+
+      <button onclick="generateSchedule()" class="generate-btn">
+        <i class="fa-solid fa-bolt"></i> Generate AI Schedule
+      </button>
+    </div>
+
+    <!-- Results -->
+    <div id="results">
+      <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 25px;">
+
+        <!-- Schedule -->
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h3 style="font-size: 24px;">Your Study Schedule</h3>
+            <button onclick="copySchedule()" style="background: none; border: none; color: #6366f1; cursor: pointer;">
+              <i class="fa-solid fa-copy"></i> Copy
+            </button>
+          </div>
+          <div class="card" style="padding: 20px;">
+            <div id="scheduleDisplay"></div>
+          </div>
+        </div>
+
+        <!-- Right Side Widgets -->
+        <div style="display: flex; flex-direction: column; gap: 25px;">
+
+          <!-- Focus Timer -->
+          <div class="card" style="text-align: center;">
+            <h4 style="margin-bottom: 15px; color: #475569;">Focus Timer (Pomodoro)</h4>
+            <div id="timer">25:00</div>
+            <div>
+              <button onclick="toggleTimer()" id="startBtn" class="timer-btn start-btn">Start</button>
+              <button onclick="resetTimer()" class="timer-btn reset-btn" style="margin-left: 10px;">Reset</button>
+            </div>
+          </div>
+
+          <!-- AI Suggestions -->
+          <div class="card">
+            <h4 style="margin-bottom: 15px; color: #475569;">
+              <i class="fa-solid fa-lightbulb" style="color: #eab308;"></i> AI Suggestions
+            </h4>
+            <div id="aiSuggestions" class="ai-suggestions"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+// Timer Variables
+let timeLeft = 25 * 60;
+let timerInterval = null;
+let isRunning = false;
+
+function updateTimer() {
+  const min = Math.floor(timeLeft / 60);
+  const sec = timeLeft % 60;
+  document.getElementById('timer').textContent = 
+    `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+}
+
+function toggleTimer() {
+  const btn = document.getElementById('startBtn');
+  if (!isRunning) {
+    isRunning = true;
+    btn.textContent = "Pause";
+    btn.style.background = "#f59e0b";
+    
+    timerInterval = setInterval(() => {
+      timeLeft--;
+      updateTimer();
+      if (timeLeft <= 0) {
+        clearInterval(timerInterval);
+        alert("🎉 Great job! Take a break.");
+        resetTimer();
+      }
+    }, 1000);
+  } else {
+    clearInterval(timerInterval);
+    isRunning = false;
+    btn.textContent = "Resume";
+    btn.style.background = "#10b981";
+  }
+}
+
+function resetTimer() {
+  clearInterval(timerInterval);
+  timeLeft = 25 * 60;
+  isRunning = false;
+  updateTimer();
+  const btn = document.getElementById('startBtn');
+  btn.textContent = "Start";
+  btn.style.background = "#10b981";
+}
+
+// Generate Schedule
+async function generateSchedule() {
+  const examDate = document.getElementById('exam_date').value;
+  const subjectsInput = document.getElementById('subjects').value;
+  const hours = parseInt(document.getElementById('hours_per_day').value);
+
+  if (!examDate || !subjectsInput || !hours) {
+    alert("Please fill all fields!");
+    return;
+  }
+
+  const subjects = subjectsInput.split(',').map(s => s.trim()).filter(Boolean);
+
+  try {
+    const res = await fetch('/generate_schedule', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        exam_date: examDate,
+        subjects: subjects,
+        hours_per_day: hours
+      })
+    });
+
+    const data = await res.json();
+
+    // Render Schedule Table
+    let html = `<table class="schedule-table">`;
+    html += `<tr><th>Day</th>`;
+    subjects.forEach(sub => html += `<th>${sub}</th>`);
+    html += `</tr>`;
+
+    Object.keys(data.schedule).forEach(day => {
+      html += `<tr><td><strong>${day}</strong></td>`;
+      subjects.forEach(sub => {
+        const hrs = data.schedule[day][sub] || 0;
+        html += `<td>${hrs.toFixed(1)} hrs</td>`;
+      });
+      html += `</tr>`;
+    });
+    html += `</table>`;
+
+    document.getElementById('scheduleDisplay').innerHTML = html;
+    document.getElementById('aiSuggestions').innerHTML = `<p>${data.suggestions}</p>`;
+
+    document.getElementById('results').style.display = 'block';
+
+  } catch (err) {
+    alert("Error generating schedule: " + err.message);
+  }
+}
+
+function copySchedule() {
+  const text = document.getElementById('scheduleDisplay').innerText;
+  navigator.clipboard.writeText(text);
+  alert("Schedule copied to clipboard!");
+}
+
+// Initialize
+updateTimer();
+</script>
+
+</body>
+</html>
