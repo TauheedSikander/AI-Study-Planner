@@ -2,9 +2,7 @@
 
 A modern, intelligent study planner built with **FastAPI** and **HTML/CSS/JavaScript** that helps students create personalized study schedules and get AI-powered suggestions.
 
-![Study Planner Preview](https://via.placeholder.com/800x400?text=AI+Study+Planner+Preview)
-
-## ✨ Features
+## Features
 
 - **Smart Schedule Generator**: Input exam date, subjects, and daily hours → instantly get a day-wise study plan
 - **Progress Tracking**: Mark days as completed with checkboxes and see real-time progress bar
@@ -13,7 +11,7 @@ A modern, intelligent study planner built with **FastAPI** and **HTML/CSS/JavaSc
 - **Responsive & Clean UI**: Modern glassmorphic design with smooth interactions
 - **Fully Functional**: No backend required for frontend (works with FastAPI)
 
-## 🛠️ Technologies Used
+## Technologies Used
 
 - **Backend**: FastAPI (Python)
 - **Frontend**: HTML5, CSS3, Vanilla JavaScript
@@ -21,7 +19,7 @@ A modern, intelligent study planner built with **FastAPI** and **HTML/CSS/JavaSc
 - **AI Integration**: Groq API + Llama-3.3-70B model
 - **Styling**: Custom CSS with Font Awesome icons
 
-## 🚀 How It Works
+## How It Works
 
 1. Enter your **Exam Date**, **Subjects** (comma separated), and **Hours per Day**
 2. Click **"Generate AI Schedule"**
@@ -30,7 +28,7 @@ A modern, intelligent study planner built with **FastAPI** and **HTML/CSS/JavaSc
 5. Use the built-in **Focus Timer** for study sessions
 6. Read **AI-powered suggestions** for better study habits
 
-## 🖥️ How to Run Locally
+## How to Run Locally
 
 ```bash
 # Clone the repository
@@ -51,7 +49,7 @@ Then open your browser and go to: http://127.0.0.1:8000
 
 ## Project Structure
 ```bash
-textAI-Study-Planner/
+AI-Study-Planner/
 ├── main.py
 ├── scheduler.py
 ├── ai_helper.py
