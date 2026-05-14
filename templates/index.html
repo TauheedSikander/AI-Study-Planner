@@ -197,6 +197,145 @@
       overflow-y: auto;
       white-space: pre-wrap;
     }
+
+    /* ===== Mobile (Hamburger sidebar) ===== */
+    .mobile-topbar {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .hamburger-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      background: rgba(255,255,255,0.85);
+      color: #334155;
+      cursor: pointer;
+    }
+
+    .hamburger-btn i { font-size: 18px; }
+
+    .mobile-title {
+      font-size: 18px;
+      color: #1e2937;
+      font-weight: 800;
+    }
+
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.35);
+      z-index: 40;
+    }
+
+    @media (max-width: 1024px) {
+      body {
+        height: auto;
+        overflow: auto;
+        display: block;
+      }
+
+      .main-content {
+        padding: 22px 18px 30px;
+      }
+
+      .card {
+        padding: 20px;
+        border-radius: 16px;
+        margin-bottom: 18px;
+      }
+
+      .results-top {
+        gap: 20px;
+      }
+
+      #timer {
+        font-size: 48px;
+        margin: 12px 0;
+      }
+
+      .schedule-container {
+        max-height: 380px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      body {
+        height: auto;
+        overflow: auto;
+        display: block;
+      }
+
+      .mobile-topbar { display: flex; padding: 0 6px; }
+
+      .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        height: 100vh;
+        width: 85vw;
+        max-width: 320px;
+        z-index: 50;
+        transform: translateX(-100%);
+        transition: transform 0.25s ease;
+      }
+
+      .sidebar.is-open {
+        transform: translateX(0);
+      }
+
+      .sidebar-overlay.is-open {
+        display: block;
+      }
+
+      .main-content {
+        padding: 18px 14px 30px;
+      }
+
+      .header { display: none; }
+
+      .results-top {
+        grid-template-columns: 1fr;
+        gap: 18px;
+      }
+
+      .card {
+        padding: 16px;
+        border-radius: 16px;
+        margin-bottom: 18px;
+      }
+
+      #timer {
+        font-size: 44px;
+        margin: 10px 0;
+      }
+
+      .btn-start, .btn-reset {
+        padding: 12px 18px;
+        font-size: 15px;
+      }
+
+      .schedule-container {
+        max-height: 320px;
+        overflow-x: auto;
+      }
+
+      .schedule-table th, .schedule-table td {
+        padding: 10px 10px;
+        font-size: 13px;
+        white-space: nowrap;
+      }
+
+      .timer-card { justify-content: flex-start; }
+    }
   </style>
 </head>
 
@@ -215,7 +354,17 @@
   </div>
 </div>
 
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
 <div class="main-content">
+  <div class="mobile-topbar">
+    <button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Open menu">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+    <div class="mobile-title">AI Study Planner</div>
+    <div style="width:44px"></div>
+  </div>
+
   <div class="header"><h2>AI Study Planner</h2></div>
 
   <div class="card">
@@ -280,6 +429,28 @@
 </div>
 
 <script>
+// ===== Mobile sidebar =====
+function toggleSidebar() {
+  const sidebar = document.querySelector('.sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  sidebar.classList.toggle('is-open');
+  overlay.classList.toggle('is-open');
+}
+
+function closeSidebar() {
+  const sidebar = document.querySelector('.sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  sidebar.classList.remove('is-open');
+  overlay.classList.remove('is-open');
+}
+
+// Close sidebar after clicking any nav link (optional)
+Array.from(document.querySelectorAll('.nav a')).forEach(a => {
+  a.addEventListener('click', () => {
+    closeSidebar();
+  });
+});
+
 // Timer Logic
 let timeLeft = 25 * 60;
 let timerInterval = null;
@@ -378,7 +549,7 @@ function calculateProgress() {
   const checked = document.querySelectorAll('.day-check:checked').length;
   const total = document.querySelectorAll('.day-check').length;
   const percent = total ? Math.round((checked / total) * 100) : 0;
-  
+
   document.getElementById('progressBar').style.width = percent + '%';
   document.getElementById('progressText').innerText = percent + '% Completed';
 }
@@ -387,3 +558,4 @@ updateTimer();
 </script>
 </body>
 </html>
+
