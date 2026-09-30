@@ -43,8 +43,8 @@ Write the response in clean, readable plain text.
         text = response.choices[0].message.content.strip()
 
         # Clean unwanted markdown and artifacts
-        text = text.replace("**", "").replace("```", "").replace("1.", "-").replace("2.", "-").replace("3.", "-")
-        text = text.replace("Example:", "").strip()
+        # text = text.replace("**", "").replace("```", "").replace("1.", "-").replace("2.", "-").replace("3.", "-")
+        # text = text.replace("Example:", "").strip()
 
         return text
 
